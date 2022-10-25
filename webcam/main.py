@@ -1,13 +1,22 @@
 import logging
+import configparser
 import cv2 as ocv
 from datetime import datetime
 from pathlib import Path
 
-# input variables
-cam_ports = [0, 1]
-settings_file = r'C:\Lidar\System\settings.txt'
-key_word = 'Campaign ID ='
-path_out = Path(r'C:\Lidar\Webcam')
+
+def ConfigSectionMap(Config, section):
+    dict1 = {}
+    options = Config.options(section)
+    for option in options:
+        try:
+            dict1[option] = Config.get(section, option)
+            if dict1[option] == -1:
+                print("skip: %s" % option)
+        except:
+            print("exception on %s!" % option)
+            dict1[option] = None
+    return dict1
 
 
 def img_cap(port):
@@ -47,9 +56,9 @@ def get_campaign(settings_file, key_word):
         for line in settings:
             # find campaign id line
             if line.find(key_word) != -1:
-                line_str = line.split('"')
-                
-    return line_str[1]
+                campaign_name = line.split('"')
+
+    return campaign_name[1]
 
 
 def run_log(path_out):
@@ -63,6 +72,16 @@ def run_log(path_out):
 
 
 if __name__ == '__main__':
+    # read config
+    Config = configparser.ConfigParser()
+    Config.read("C:\Lidar\System\webcam.config")
+
+    # get inputs
+    cam_ports = ConfigSectionMap(Config, 'Files')['cam_ports']
+    settings_file = ConfigSectionMap(Config, 'Files')['settings_file']
+    key_word = ConfigSectionMap(Config, 'Files')['key_word']
+    path_out = Path(ConfigSectionMap(Config, 'Files')['path_out'])
+
     # make output dir
     Path.mkdir(path_out, parents=True, exist_ok=True)
 
@@ -73,13 +92,13 @@ if __name__ == '__main__':
     campaign_name = get_campaign(settings_file, key_word)
 
     for port in cam_ports:
-        result, image = img_cap(port)
+        result, image = img_cap(int(port))
 
         if result:
             now = datetime.now().strftime('%Y%m%d_%H%M%S')
-            fig_name = f'{campaign_name}_{now}_Cam{port + 1}.png'
+            fig_name = f'{campaign_name}_{now}_Cam{int(port) + 1}.png'
             file_path = path_out / fig_name
             img_save(image, fig_name, file_path)
-            logging.info(f'Cam {port + 1} image saved')
+            logging.info(f'Cam {int(port) + 1} image saved')
         else:
-            logging.info(f"Cam {port + 1} not detected")
+            logging.info(f"Cam {int(port) + 1} not detected")
