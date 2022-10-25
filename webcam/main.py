@@ -1,22 +1,23 @@
 import logging
-import configparser
+from configparser import ConfigParser
 import cv2 as ocv
 from datetime import datetime
 from pathlib import Path
 
 
-def ConfigSectionMap(Config, section):
-    dict1 = {}
-    options = Config.options(section)
-    for option in options:
+def get_config(config_file, section):
+    config_dict = {}
+    settings = config_file.options(section)
+    for val in settings:
         try:
-            dict1[option] = Config.get(section, option)
-            if dict1[option] == -1:
-                print("skip: %s" % option)
+            config_dict[val] = config_file.get(section, val)
+            if config_dict[val] == -1:
+                logging.info(f"skip: {val}")
         except:
-            print("exception on %s!" % option)
-            dict1[option] = None
-    return dict1
+            logging.info(f"exception on {val}!")
+            config_dict[val] = None
+            raise
+    return config_dict
 
 
 def img_cap(port):
@@ -73,14 +74,14 @@ def run_log(path_out):
 
 if __name__ == '__main__':
     # read config
-    Config = configparser.ConfigParser()
-    Config.read("C:\Lidar\System\webcam.config")
+    config_file = ConfigParser()
+    config_file.read(r"C:\Lidar\System\webcam.config")
 
     # get inputs
-    cam_ports = ConfigSectionMap(Config, 'Files')['cam_ports']
-    settings_file = ConfigSectionMap(Config, 'Files')['settings_file']
-    key_word = ConfigSectionMap(Config, 'Files')['key_word']
-    path_out = Path(ConfigSectionMap(Config, 'Files')['path_out'])
+    cam_ports = get_config(config_file, 'Files')['cam_ports']
+    settings_file = get_config(config_file, 'Files')['settings_file']
+    key_word = get_config(config_file, 'Files')['key_word']
+    path_out = Path(get_config(config_file, 'Files')['path_out'])
 
     # make output dir
     Path.mkdir(path_out, parents=True, exist_ok=True)
