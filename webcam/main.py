@@ -23,8 +23,8 @@ def get_config(config_file, section):
 def img_cap(port):
     # init webcam
     cam = ocv.VideoCapture(port, ocv.CAP_DSHOW)
-    cam.set(ocv.CAP_PROP_FRAME_WIDTH, 1280)
-    cam.set(ocv.CAP_PROP_FRAME_HEIGHT, 720)
+    cam.set(ocv.CAP_PROP_FRAME_WIDTH, 1920)
+    cam.set(ocv.CAP_PROP_FRAME_HEIGHT, 1080)
 
     # capture image
     result, image = cam.read()
