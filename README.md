@@ -3,7 +3,8 @@
 A python script for capturing screenshots from a USB webcam.  
 - Flexible number of USB webcams
 - Overlays Campaign ID and Timestamp info
-- No custom configuration required
+- No on-site configuration required
+- Can be run by Windows Task Scheduler
 
 
 ## Authors
@@ -38,7 +39,7 @@ Run the following commands.
   conda env create -n webcam python=3.9
   conda install -c conda-forge opencv pyinstaller
   conda activate webcam
-  cd `project` folder
+  cd `...\webcam_capture\webcam`
   python main.py
 ```
 
@@ -51,3 +52,16 @@ Example of expected log outputs showing successful and error outputs.
 2022-10-26 14:05:20.805 Cam 1 image saved
 2022-10-26 14:05:20.807 Cam 2 not detected
 ```
+
+## Build .exe for deployment
+```bash
+conda activate webcam
+cd `...\webcam_capture\webcam`
+pyinstaller main.spec
+```
+
+## Deploy on lidar
+- Copy `webcam.config` file to `C:\Lidar\Settings` folder
+- Copy `webcam_capture.exe` to `C:\Lidar\Software` folder
+- Create task in Windows Task Scheduler to run at desired frequency
+- Create GoodSync task to sync `output_folder` to data server on a daily basis
