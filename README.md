@@ -31,16 +31,16 @@ A python script for capturing screenshots from a USB webcam.
 
 
 ## Run via CMD
-Create an environment with Python 3.9+, OpenCV and Pyinstaller.  
-Copy `webcam.config` file to `C:\Lidar\Settings` folder
+Create an environment with Python 3.9+, OpenCV and Pyinstaller.    
+Copy `webcam.config` file to `C:\Lidar\Settings` folder.  
 Run the following commands.
 
 ```bash
-  conda env create -n webcam python=3.9
-  conda install -c conda-forge opencv pyinstaller
-  conda activate webcam
-  cd `...\webcam_capture\webcam`
-  python main.py
+  (base) conda env create -n webcam python=3.9
+  (base) conda activate webcam
+  (webcam) conda install -c conda-forge opencv pyinstaller
+  (webcam) cd `...\webcam_capture\webcam`
+  (webcam) python main.py
 ```
 
 ## webcam.log
@@ -55,9 +55,9 @@ Example of expected log outputs showing successful and error outputs.
 
 ## Build .exe for deployment
 ```bash
-conda activate webcam
-cd `...\webcam_capture\webcam`
-pyinstaller main.spec
+(base) conda activate webcam
+(webcam) cd `...\webcam_capture\webcam`
+(webcam) pyinstaller main.spec
 ```
 
 ## Deploy on lidar
@@ -65,3 +65,6 @@ pyinstaller main.spec
 - Copy `webcam_capture.exe` to `C:\Lidar\Software` folder
 - Create task in Windows Task Scheduler to run at desired frequency
 - Create GoodSync task to sync `output_folder` to data server on a daily basis
+
+## Roadmap
+- **Build live image capture**
