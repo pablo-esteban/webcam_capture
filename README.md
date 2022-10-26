@@ -31,6 +31,7 @@ A python script for capturing screenshots from a USB webcam.
 
 ## Run via CMD
 Create an environment with Python 3.9+, OpenCV and Pyinstaller.  
+Copy `webcam.config` file to `C:\Lidar\Settings` folder
 Run the following commands.
 
 ```bash
@@ -39,4 +40,14 @@ Run the following commands.
   conda activate webcam
   cd `project` folder
   python main.py
+```
+
+## webcam.log
+Example of expected log outputs showing successful and error outputs.  
+
+```bash
+2022-10-26 14:05:06.587 Cam 1 image saved
+2022-10-26 14:05:12.285 Cam 2 image saved
+2022-10-26 14:05:20.805 Cam 1 image saved
+2022-10-26 14:05:20.807 Cam 2 not detected
 ```
