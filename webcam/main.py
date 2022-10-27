@@ -75,8 +75,13 @@ def run_log(path_out):
 
 if __name__ == '__main__':
     # read config
-    config_file = ConfigParser()
-    config_file.read(r"C:\Lidar\System\webcam.config")
+    webcam_config = Path(r"C:\Lidar\System\webcam.config")
+
+    if Path.exists(webcam_config):
+        config_file = ConfigParser()
+        config_file.read(webcam_config)
+    else:
+        sys.exit(f'Error: "{webcam_config}" not found')
 
     # get inputs
     cam_ports = get_config(config_file, 'Files')['cam_ports']
@@ -97,6 +102,7 @@ if __name__ == '__main__':
         logging.info(f'Error: "{settings_file}" not found')
         sys.exit(f'Error: "{settings_file}" not found')
 
+    # capture images
     if len(cam_ports) >= 1:
         for port in cam_ports:
             result, image = img_cap(int(port))
