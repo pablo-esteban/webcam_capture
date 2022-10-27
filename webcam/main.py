@@ -1,3 +1,4 @@
+import sys
 import logging
 from configparser import ConfigParser
 import cv2 as ocv
@@ -51,7 +52,7 @@ def img_save(image, fig_name, file_path):
 
 def get_campaign(settings_file, key_word):
     # open settings file, read each line
-    with open(settings_file, 'r') as settings_file:
+    with open(str(settings_file), 'r') as settings_file:
         settings = settings_file.readlines()
 
         for line in settings:
@@ -79,7 +80,7 @@ if __name__ == '__main__':
 
     # get inputs
     cam_ports = get_config(config_file, 'Files')['cam_ports']
-    settings_file = get_config(config_file, 'Files')['settings_file']
+    settings_file = Path(get_config(config_file, 'Files')['settings_file'])
     key_word = get_config(config_file, 'Files')['key_word']
     path_out = Path(get_config(config_file, 'Files')['path_out'])
 
@@ -90,16 +91,24 @@ if __name__ == '__main__':
     run_log(path_out)
 
     # get campaign ID
-    campaign_name = get_campaign(settings_file, key_word)
+    if Path.exists(settings_file):
+        campaign_name = get_campaign(settings_file, key_word)
+    else:
+        logging.info(f'Error: "{settings_file}" not found')
+        sys.exit(f'Error: "{settings_file}" not found')
 
-    for port in cam_ports:
-        result, image = img_cap(int(port))
+    if len(cam_ports) >= 1:
+        for port in cam_ports:
+            result, image = img_cap(int(port))
 
-        if result:
-            now = datetime.now().strftime('%Y%m%d_%H%M%S')
-            fig_name = f'{campaign_name}_{now}_Cam{int(port) + 1}.png'
-            file_path = path_out / fig_name
-            img_save(image, fig_name, file_path)
-            logging.info(f'Cam {int(port) + 1} image saved')
-        else:
-            logging.info(f"Cam {int(port) + 1} not detected")
+            if result:
+                now = datetime.now().strftime('%Y%m%d_%H%M%S')
+                fig_name = f'{campaign_name}_{now}_Cam{int(port) + 1}.png'
+                file_path = path_out / fig_name
+                img_save(image, fig_name, file_path)
+                logging.info(f'Cam {int(port) + 1} image saved')
+            else:
+                logging.info(f"Cam {int(port) + 1} not detected")
+    else:
+        logging.info(f'Error: No cam ports found in webcam.config')
+        sys.exit(f'Error: No cam ports found in webcam.config')
