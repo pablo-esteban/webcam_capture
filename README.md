@@ -15,23 +15,23 @@ A python script for capturing screenshots from a USB webcam.
 ## Features
 - Reads `webcam.config` from `C:\Lidar\Settings`
 - Creates output folder
-- Reads lidar `settings_file` file and extracts `key_word`
+- Searches `campaign_path` and reads the most recent file and extracts `key_word`
 - Captures image from webcams in sequential order
 - Overlays `key_word` and Timestamp info onto image
 - Writes execution log to output folder
 
 
 ## webcam.config
-| Parameter      | Type     | Description                                            |
-| :------------- | :------- | :----------------------------------------------------  |
-| `cam_ports`    | `string` | List of port numbers to search for a USB webcam device |
-| `settings_file`| `string` | Location of lidar settings file                        |
-| `key_word `    | `string` | Value in settings file to search for                   |
-| `path_out`     | `string` | Location of saved images and log file                  |
+| Parameter       | Type     | Description                                            |
+|:----------------| :------- |:-------------------------------------------------------|
+| `cam_ports`     | `string` | List of port numbers to search for a USB webcam device |
+| `campaign_path` | `string` | Location of lidar campaign files                       |
+| `key_word `     | `string` | Value in settings file to search for                   |
+| `path_out`      | `string` | Location of saved images and log file                  |
 
 
 ## Run via CMD
-Create an environment with Python 3.9+, OpenCV and Pyinstaller.    
+Create an environment with Python 3.9, OpenCV, Pyinstaller & Pyinstaller_versionfile.    
 Copy `webcam.config` file to `C:\Lidar\Settings` folder.  
 Run the following commands.
 
@@ -39,6 +39,7 @@ Run the following commands.
   (base) conda env create -n webcam python=3.9
   (base) conda activate webcam
   (webcam) conda install -c conda-forge opencv pyinstaller
+  (webcam) pip install pyinstaller_versionfile
   (webcam) cd `...\webcam_capture\webcam`
   (webcam) python main.py
 ```
@@ -54,6 +55,7 @@ Example of expected log outputs showing successful and error outputs.
 ```
 
 ## Build .exe for deployment
+Update relevant details in the `version_file_builder.py` and execute to make the `version.txt` file required for the pyinstaller .exe build. 
 ```bash
 (base) conda activate webcam
 (webcam) cd `...\webcam_capture\webcam`
