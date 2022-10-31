@@ -1,5 +1,6 @@
 import sys
 import logging
+import glob
 from configparser import ConfigParser
 import cv2 as ocv
 from datetime import datetime
@@ -50,17 +51,21 @@ def img_save(image, fig_name, file_path):
     ocv.imwrite(str(file_path), new_fig)
 
 
-def get_campaign(settings_file, key_word):
-    # open settings file, read each line
-    with open(str(settings_file), 'r') as settings_file:
-        settings = settings_file.readlines()
+def get_campaign(campaign_path, key_word):
+    # get most recent campaign file
+    f_path = str(campaign_path) + '\\' + '**' + '\\' + '*.txt'
+    file_list = glob.glob(f_path, recursive=True)
+    campaign_file = file_list[-1]
+
+    with open(campaign_file, 'r') as campaign_file:
+        settings = campaign_file.readlines()
 
         for line in settings:
             # find campaign id line
             if line.find(key_word) != -1:
-                campaign_name = line.split('"')
+                campaign_name = line.split(':')[1]
 
-    return campaign_name[1]
+    return campaign_name
 
 
 def run_log(path_out):
@@ -85,7 +90,7 @@ if __name__ == '__main__':
 
     # get inputs
     cam_ports = get_config(config_file, 'Files')['cam_ports']
-    settings_file = Path(get_config(config_file, 'Files')['settings_file'])
+    campaign_file = Path(get_config(config_file, 'Files')['campaign_path'])
     key_word = get_config(config_file, 'Files')['key_word']
     path_out = Path(get_config(config_file, 'Files')['path_out'])
 
@@ -96,11 +101,11 @@ if __name__ == '__main__':
     run_log(path_out)
 
     # get campaign ID
-    if Path.exists(settings_file):
-        campaign_name = get_campaign(settings_file, key_word)
+    if Path.exists(campaign_file):
+        campaign_name = get_campaign(campaign_file, key_word).rstrip()
     else:
-        logging.info(f'Error: "{settings_file}" not found')
-        sys.exit(f'Error: "{settings_file}" not found')
+        logging.info(f'Error: "{campaign_file}" not found')
+        sys.exit(f'Error: "{campaign_file}" not found')
 
     # capture images
     if len(cam_ports) >= 1:
