@@ -1,8 +1,8 @@
 import sys
 import logging
-import glob
-from configparser import ConfigParser
 import cv2 as ocv
+from glob import glob
+from configparser import ConfigParser
 from datetime import datetime
 from pathlib import Path
 
@@ -54,7 +54,7 @@ def img_save(image, fig_name, file_path):
 def get_campaign(campaign_path, key_word):
     # get most recent campaign file
     f_path = str(campaign_path) + '\\' + '**' + '\\' + '*.txt'
-    file_list = glob.glob(f_path, recursive=True)
+    file_list = glob(f_path, recursive=True)
     campaign_file = file_list[-1]
 
     with open(campaign_file, 'r') as campaign_file:
