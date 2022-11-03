@@ -64,7 +64,7 @@ def get_campaign(campaign_path, key_word):
             # find campaign id line
             if line.find(key_word) != -1:
                 campaign_name = line.split(':')[1]
-
+    # it is possible that the file being read does not have the `key_word` so `campaign_name` could be undefined
     return campaign_name
 
 
@@ -80,25 +80,37 @@ def run_log(path_out):
 
 if __name__ == '__main__':
     # read config
-    webcam_config = Path(r"C:\Lidar\System\webcam.config")
+    webcam_config = Path(r"C:\Lidar\System\webcam.config")  # this variable holds a path to a file
 
     if Path.exists(webcam_config):
         config_file = ConfigParser()
-        config_file.read(webcam_config)
+        config_file.read(webcam_config)  # this now holds the loaded configuration, so it is no longer a file
+        # `webcam_config` would be better named `config_file`
+        # and `config_file` could simply be named `config` or `webcam_config`
     else:
+        sys.exit(f'Error: "{webcam_config}" not found')  # this logic is good, yet it can be improved
+        
+    if not webcam_config.exists():  # this if-statement is only two lines long and much easier to read
         sys.exit(f'Error: "{webcam_config}" not found')
 
+    # after the above statement, the rest of the code can live outside of the if
+    config_file = ConfigParser()
+    config_file.read(webcam_config)
+        
     # get inputs
+    # i am not entirel sure why you need the function `get_config()`, you should be able to do `config_file['Files']['cam_ports']`
     cam_ports = get_config(config_file, 'Files')['cam_ports']
     campaign_file = Path(get_config(config_file, 'Files')['campaign_path'])
     key_word = get_config(config_file, 'Files')['key_word']
     path_out = Path(get_config(config_file, 'Files')['path_out'])
 
     # make output dir
-    Path.mkdir(path_out, parents=True, exist_ok=True)
+    Path.mkdir(path_out, parents=True, exist_ok=True)  # this could be path_out.mkdir(parents=True, exist_ok=True)
 
     # setup logging
-    run_log(path_out)
+    run_log(path_out)  
+    # it is a bit confusing to read the comment `setup logging` and then have a function that's called `run_log`, 
+    # you could simply call the function `setup_logging()`
 
     # get campaign ID
     if Path.exists(campaign_file):
